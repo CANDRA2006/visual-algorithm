@@ -1,7 +1,25 @@
-# Build folders
+# Build output
 build/
 bin/
-cmake-build-*/
+
+# CMake cache
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+
+# Compiled binaries
+*.exe
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+
+# Log files
+*.txt
+!assets/fonts/README.txt
 
 # IDE folders
 .vscode/
@@ -9,18 +27,6 @@ cmake-build-*/
 *.user
 *.suo
 
-# SFML DLLs 
-*.dll
-*.exe
-
 # OS files
 Thumbs.db
 .DS_Store
-build.ps1
-
-# Compiled files
-*.o
-*.obj
-*.exe
-*.out
-*.app
