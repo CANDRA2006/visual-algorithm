@@ -39,45 +39,6 @@ An interactive desktop application for visualizing classic computer-science sort
 
 ---
 
-## 🏗 Project Structure
-
-```
-VisualAlgorithmSimulator/
-├── CMakeLists.txt
-├── README.md
-├── assets/
-│   └── fonts/          ← Drop a .ttf font here (optional, falls back to system fonts)
-├── include/
-│   ├── core/
-│   │   ├── algorithm_base.h   ← Abstract base + AlgorithmStep, AlgorithmStats
-│   │   ├── application.h
-│   │   └── logger.h           ← Thread-safe singleton logger
-│   ├── algorithms/sorting/
-│   │   ├── bubble_sort.h
-│   │   ├── selection_sort.h
-│   │   ├── insertion_sort.h
-│   │   ├── merge_sort.h
-│   │   └── quick_sort.h
-│   └── visualizer/
-│       └── sorting_visualizer.h
-└── src/
-    ├── main.cpp
-    ├── core/
-    │   ├── application.cpp
-    │   ├── algorithm_base.cpp
-    │   └── logger.cpp
-    ├── algorithms/sorting/
-    │   ├── bubble_sort.cpp
-    │   ├── selection_sort.cpp
-    │   ├── insertion_sort.cpp
-    │   ├── merge_sort.cpp
-    │   └── quick_sort.cpp
-    └── visualizer/
-        └── sorting_visualizer.cpp
-```
-
----
-
 ## 🚀 Build & Run
 
 ### Prerequisites
@@ -134,6 +95,3 @@ Key design patterns:
 - **Singleton** — `Logger` provides application-wide logging with zero overhead when disabled
 
 ---
-
-## 📄 License
-MIT — see [LICENSE](LICENSE).
