@@ -1,0 +1,26 @@
+# Build folders
+build/
+bin/
+cmake-build-*/
+
+# IDE folders
+.vscode/
+.idea/
+*.user
+*.suo
+
+# SFML DLLs 
+*.dll
+*.exe
+
+# OS files
+Thumbs.db
+.DS_Store
+build.ps1
+
+# Compiled files
+*.o
+*.obj
+*.exe
+*.out
+*.app
