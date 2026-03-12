@@ -1,45 +1,99 @@
 cmake_minimum_required(VERSION 3.16)
-project(VisualAlgorithmSimulator)
+project(VisualAlgorithmSimulator VERSION 2.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Set SFML path explicitly
-set(SFML_DIR "C:/SFML/lib/cmake/SFML")
-set(CMAKE_PREFIX_PATH "C:/SFML")
+# ============================================================
+# Build type defaults
+# ============================================================
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
+endif()
+
+# ============================================================
+# SFML detection — portable across platforms
+# ============================================================
+if(WIN32)
+    # Allow override via -DSFML_DIR=... on command line
+    if(NOT DEFINED SFML_DIR)
+        set(SFML_DIR "C:/SFML/lib/cmake/SFML")
+        set(CMAKE_PREFIX_PATH "C:/SFML")
+    endif()
+elseif(APPLE)
+    find_package(SFML 3.0 COMPONENTS Graphics Window System QUIET)
+    if(NOT SFML_FOUND)
+        set(CMAKE_PREFIX_PATH "/opt/homebrew;/usr/local")
+    endif()
+endif()
 
 find_package(SFML 3.0 COMPONENTS Graphics Window System REQUIRED)
 
-include_directories(
-    include
-    ${SFML_INCLUDE_DIRS}
-    "C:/SFML/include"
-)
-
+# ============================================================
+# Source files
+# ============================================================
 set(SOURCES
     src/main.cpp
     src/core/application.cpp
     src/core/algorithm_base.cpp
+    src/core/logger.cpp
     src/visualizer/sorting_visualizer.cpp
     src/algorithms/sorting/bubble_sort.cpp
+    src/algorithms/sorting/selection_sort.cpp
+    src/algorithms/sorting/insertion_sort.cpp
+    src/algorithms/sorting/merge_sort.cpp
+    src/algorithms/sorting/quick_sort.cpp
 )
 
-add_executable(VisualAlgorithmSimulator ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_link_libraries(VisualAlgorithmSimulator PRIVATE 
-    sfml-graphics
-    sfml-window
-    sfml-system
+# ============================================================
+# Includes
+# ============================================================
+target_include_directories(${PROJECT_NAME} PRIVATE include)
+
+# ============================================================
+# Link SFML
+# ============================================================
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    SFML::Graphics
+    SFML::Window
+    SFML::System
 )
 
-set_target_properties(VisualAlgorithmSimulator PROPERTIES
+# ============================================================
+# Compiler warnings
+# ============================================================
+if(MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX-)
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
+endif()
+
+# ============================================================
+# Output directory & asset copy
+# ============================================================
+set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
-add_custom_command(TARGET VisualAlgorithmSimulator POST_BUILD
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/assets
-        ${CMAKE_BINARY_DIR}/bin/assets
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        "C:/SFML/bin"
-        ${CMAKE_BINARY_DIR}/bin
+        "${CMAKE_SOURCE_DIR}/assets"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets"
+    COMMENT "Copying assets..."
 )
+
+# On Windows copy SFML DLLs automatically
+if(WIN32)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "C:/SFML/bin"
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+        COMMENT "Copying SFML DLLs..."
+    )
+endif()
+
+message(STATUS "Build type   : ${CMAKE_BUILD_TYPE}")
+message(STATUS "C++ standard : ${CMAKE_CXX_STANDARD}")

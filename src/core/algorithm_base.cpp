@@ -1,5 +1,5 @@
 #include "core/algorithm_base.h"
-
+// AlgorithmBase virtual destructor definition.
 namespace vas {
-// Implementation is in header file for simplicity
+// All implementations reside in the header (inline/template).
 } // namespace vas
