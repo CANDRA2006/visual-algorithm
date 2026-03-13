@@ -18,8 +18,7 @@
 7. [Cara Menambah Algoritma Baru](#7-cara-menambah-algoritma-baru)
 8. [Sistem Logging](#8-sistem-logging)
 9. [Troubleshooting](#9-troubleshooting)
-10. [Catatan Pengembang](#10-catatan-pengembang)
-
+9. [Konvensi Penulisan Kode](#9-konvensi-penulisan-kode)
 ---
 
 ## 1. Pengenalan Project
@@ -499,38 +498,10 @@ Kondisi ini tidak menyebabkan kerusakan fungsional. Unduh salah satu font beriku
 
 ---
 
-## 10. Catatan Pengembang
 
-### Potensi Perbaikan Minor
 
-Terdapat redundansi pada fungsi `generateRandomData()` di `sorting_visualizer.cpp`, di mana `initialize()` dipanggil dua kali: sekali sebelum `generateData()` (saat *callback* belum terdaftar) dan sekali sesudahnya (saat *callback* telah terdaftar). Pemanggilan pertama tidak memberikan dampak fungsional dan dapat dihapus untuk meningkatkan kejelasan kode:
 
-```cpp
-void SortingVisualizer::generateRandomData(size_t count)
-{
-    // ...
-    m_algorithm = createAlgorithm(m_algorithmIndex);
-    initialize();              // ← Baris ini redundan dan dapat dihapus
-
-    if (auto* p = dynamic_cast<BubbleSort*>(m_algorithm.get())) p->generateData(m_arraySize);
-    // ...
-
-    m_algorithm->initialize(); // ← Pemanggilan yang efektif (callback telah terdaftar)
-}
-```
-
-### Rencana Pengembangan Lanjutan
-
-Berkas header kosong berikut telah disediakan sebagai kerangka untuk fitur-fitur yang direncanakan:
-
-- `include/algorithms/graph/bfs.h` dan `dfs.h` — implementasi BFS dan DFS pada struktur graf
-- `include/algorithms/pathfinding/dijkstra.h` dan `astar.h` — algoritma pencarian jalur terpendek
-- `include/visualizer/graph_visualizer.h` — komponen visualisasi untuk algoritma graf
-- `include/core/ui_manager.h` — komponen antarmuka pengguna (Button, Slider, Dropdown)
-
-Seluruh fitur tersebut dapat dikembangkan mengikuti pola arsitektur yang sama dengan algoritma pengurutan yang telah ada.
-
-### Konvensi Penulisan Kode
+### 10 Konvensi Penulisan Kode
 
 - **Namespace:** seluruh kode proyek berada di dalam namespace `vas`
 - **Include guard:** menggunakan `#pragma once` dikombinasikan dengan guard `#ifndef VAS_..._H`
