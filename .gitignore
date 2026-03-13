@@ -1,32 +1,73 @@
 # Build output
 build/
 bin/
+out/
 
-# CMake cache
+
+# CMake generated files
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
 Makefile
 *.cmake
+!CMakeLists.txt
 
-# Compiled binaries
+
+# Compiled binaries & object files
 *.exe
 *.o
 *.obj
 *.a
 *.lib
 *.dll
+*.pdb
+*.ilk
+*.exp
+
 
 # Log files
+*.log
+vas_log.txt
 *.txt
 !assets/fonts/README.txt
 
-# IDE folders
+
+# IDE — VS Code
 .vscode/
-.idea/
+*.code-workspace
+
+
+# IDE — Visual Studio
+.vs/
 *.user
 *.suo
+*.sdf
+*.VC.db
+*.VC.opendb
+ipch/
+x64/
+x86/
+Debug/
+Release/
+RelWithDebInfo/
+MinSizeRel/
 
-# OS files
+
+# IDE — CLion / JetBrains
+.idea/
+cmake-build-*/
+
+
+# IDE — Code::Blocks
+*.cbp
+*.layout
+*.depend
+
+# OS 
 Thumbs.db
-.DS_Store
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
