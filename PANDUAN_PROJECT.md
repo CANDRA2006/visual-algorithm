@@ -72,7 +72,7 @@ Apabila tidak ada berkas font yang ditemukan, aplikasi tetap dapat berjalan namu
 
 ```powershell
 # Pastikan SFML telah diekstrak ke C:/SFML
-git clone <url-repositori>
+git clone https://github.com/CANDRA2006/visual-algorithm
 cd VisualAlgorithmSimulator
 
 cmake -B build -DCMAKE_BUILD_TYPE=Release
