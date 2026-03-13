@@ -73,13 +73,13 @@ Apabila tidak ada berkas font yang ditemukan, aplikasi tetap dapat berjalan namu
 ```powershell
 # Pastikan SFML telah diekstrak ke C:/SFML
 git clone https://github.com/CANDRA2006/visual-algorithm
-cd VisualAlgorithmSimulator
+cd VisualAlgorithm
 
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 
 # Menjalankan aplikasi
-.\build\bin\VisualAlgorithmSimulator.exe
+.\build\bin\VisualAlgorithm.exe
 ```
 
 Sebagai alternatif, skrip build bawaan dapat digunakan:
@@ -90,8 +90,8 @@ Sebagai alternatif, skrip build bawaan dapat digunakan:
 ### Linux
 
 ```bash
-git clone <url-repositori>
-cd VisualAlgorithmSimulator
+git clone https://github.com/CANDRA2006/visual-algorithm
+cd VisualAlgorithm
 
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j$(nproc)
@@ -107,7 +107,7 @@ cmake -B build \
   -DSFML_DIR=$(brew --prefix sfml)/lib/cmake/SFML
 
 cmake --build build -j4
-./build/bin/VisualAlgorithmSimulator
+./build/bin/VisualAlgorithm
 ```
 
 ### Mode Debug
