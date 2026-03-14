@@ -4,11 +4,17 @@
 #include "algorithms/sorting/insertion_sort.h"
 #include "algorithms/sorting/merge_sort.h"
 #include "algorithms/sorting/quick_sort.h"
+#include "algorithms/sorting/heap_sort.h"
+#include "algorithms/sorting/shell_sort.h"
+#include "algorithms/sorting/counting_sort.h"
+#include "algorithms/sorting/radix_sort.h"
+#include "core/audio_manager.h"
 #include "core/logger.h"
 #include <algorithm>
 #include <sstream>
 #include <iomanip>
 #include <cmath>
+#include <array>
 
 namespace vas {
 
@@ -36,8 +42,38 @@ void drawRoundedRect(sf::RenderWindow& w, sf::Vector2f pos, sf::Vector2f size,
     w.draw(r);
 }
 
+// Helper: get data pointer from any algorithm variant
+const std::vector<int>* getDataPtr(AlgorithmBase* alg)
+{
+    if (auto* p = dynamic_cast<BubbleSort*>   (alg)) return &p->getData();
+    if (auto* p = dynamic_cast<SelectionSort*> (alg)) return &p->getData();
+    if (auto* p = dynamic_cast<InsertionSort*> (alg)) return &p->getData();
+    if (auto* p = dynamic_cast<MergeSort*>     (alg)) return &p->getData();
+    if (auto* p = dynamic_cast<QuickSort*>     (alg)) return &p->getData();
+    if (auto* p = dynamic_cast<HeapSort*>      (alg)) return &p->getData();
+    if (auto* p = dynamic_cast<ShellSort*>     (alg)) return &p->getData();
+    if (auto* p = dynamic_cast<CountingSort*>  (alg)) return &p->getData();
+    if (auto* p = dynamic_cast<RadixSort*>     (alg)) return &p->getData();
+    return nullptr;
+}
+
+// Helper: call generateData on correct type
+void callGenerateData(AlgorithmBase* alg, size_t size)
+{
+    if (auto* p = dynamic_cast<BubbleSort*>   (alg)) { p->generateData(size); return; }
+    if (auto* p = dynamic_cast<SelectionSort*> (alg)) { p->generateData(size); return; }
+    if (auto* p = dynamic_cast<InsertionSort*> (alg)) { p->generateData(size); return; }
+    if (auto* p = dynamic_cast<MergeSort*>     (alg)) { p->generateData(size); return; }
+    if (auto* p = dynamic_cast<QuickSort*>     (alg)) { p->generateData(size); return; }
+    if (auto* p = dynamic_cast<HeapSort*>      (alg)) { p->generateData(size); return; }
+    if (auto* p = dynamic_cast<ShellSort*>     (alg)) { p->generateData(size); return; }
+    if (auto* p = dynamic_cast<CountingSort*>  (alg)) { p->generateData(size); return; }
+    if (auto* p = dynamic_cast<RadixSort*>     (alg)) { p->generateData(size); return; }
+}
+
 } // anon namespace
 
+ 
 SortingVisualizer::SortingVisualizer(sf::RenderWindow& window, sf::Font& font)
     : m_window(window), m_font(font)
 {
@@ -46,13 +82,14 @@ SortingVisualizer::SortingVisualizer(sf::RenderWindow& window, sf::Font& font)
 
 void SortingVisualizer::initialize()
 {
+    AudioManager::instance().initialize();
+
     m_algorithm->initialize();
     m_algorithm->onStepChanged = [this](const AlgorithmStep& step) {
         m_stepDescription    = step.description;
         m_highlightedIndices = step.highlightedIndices;
         m_sortedIndices      = step.sortedIndices;
         m_highlightColor     = step.highlightColor;
-
         for (int idx : step.sortedIndices)
             m_permanentlySorted.insert(idx);
     };
@@ -70,14 +107,10 @@ void SortingVisualizer::generateRandomData(size_t count)
     m_algorithm = createAlgorithm(m_algorithmIndex);
     initialize();
 
-    if (auto* p = dynamic_cast<BubbleSort*>   (m_algorithm.get())) p->generateData(m_arraySize);
-    else if (auto* p = dynamic_cast<SelectionSort*>(m_algorithm.get())) p->generateData(m_arraySize);
-    else if (auto* p = dynamic_cast<InsertionSort*>(m_algorithm.get())) p->generateData(m_arraySize);
-    else if (auto* p = dynamic_cast<MergeSort*>    (m_algorithm.get())) p->generateData(m_arraySize);
-    else if (auto* p = dynamic_cast<QuickSort*>    (m_algorithm.get())) p->generateData(m_arraySize);
-
+    callGenerateData(m_algorithm.get(), m_arraySize);
     m_algorithm->initialize();
 
+    VAS_AUDIO.playNewData();
     VAS_LOG_INFO("Generated " + std::to_string(m_arraySize) + " elements for " +
                  m_algorithm->getName());
 }
@@ -135,6 +168,13 @@ void SortingVisualizer::setSpeed(float speed)
     VAS_LOG_INFO("Speed set to " + std::to_string(m_speed));
 }
 
+void SortingVisualizer::toggleAudio()
+{
+    bool on = !VAS_AUDIO.isEnabled();
+    VAS_AUDIO.setEnabled(on);
+    VAS_LOG_INFO(std::string("Audio ") + (on ? "enabled" : "disabled"));
+}
+
 void SortingVisualizer::setArraySize(size_t size)
 {
     size = clamp(size, MIN_SIZE, MAX_SIZE);
@@ -147,13 +187,16 @@ void SortingVisualizer::setArraySize(size_t size)
 void SortingVisualizer::selectAlgorithm(int index)
 {
     if (index == m_algorithmIndex) return;
-    m_algorithmIndex = clamp(index, 0, 4);
+    m_algorithmIndex = clamp(index, 0, ALGO_COUNT - 1);
     m_algorithm = createAlgorithm(m_algorithmIndex);
     initialize();
     generateRandomData(m_arraySize);
     VAS_LOG_INFO("Algorithm switched to: " + m_algorithm->getName());
 }
 
+ 
+//  render
+ 
 void SortingVisualizer::render()
 {
     renderBars();
@@ -164,13 +207,7 @@ void SortingVisualizer::render()
 
 void SortingVisualizer::renderBars()
 {
-    const std::vector<int>* pData = nullptr;
-    if (auto* p = dynamic_cast<BubbleSort*>   (m_algorithm.get())) pData = &p->getData();
-    else if (auto* p = dynamic_cast<SelectionSort*>(m_algorithm.get())) pData = &p->getData();
-    else if (auto* p = dynamic_cast<InsertionSort*>(m_algorithm.get())) pData = &p->getData();
-    else if (auto* p = dynamic_cast<MergeSort*>    (m_algorithm.get())) pData = &p->getData();
-    else if (auto* p = dynamic_cast<QuickSort*>    (m_algorithm.get())) pData = &p->getData();
-
+    const std::vector<int>* pData = getDataPtr(m_algorithm.get());
     if (!pData || pData->empty()) return;
 
     const auto& data = *pData;
@@ -203,11 +240,9 @@ void SortingVisualizer::renderBars()
         BarState state = BarState::DEFAULT;
         if (m_algorithm->getState() == AlgorithmState::COMPLETED ||
             m_permanentlySorted.count(static_cast<int>(i)))
-        {
             state = BarState::SORTED;
-        } else if (highlightSet.count(static_cast<int>(i))) {
+        else if (highlightSet.count(static_cast<int>(i)))
             state = BarState::COMPARING;
-        }
 
         sf::RectangleShape bar(sf::Vector2f(std::max(barWidth, 1.0f), barH));
         bar.setPosition(sf::Vector2f(xPos, yPos));
@@ -221,7 +256,7 @@ void SortingVisualizer::renderBars()
 
         if (barWidth >= 18.0f && m_font.getInfo().family != "") {
             sf::Text txt(m_font, std::to_string(data[i]),
-                         static_cast<unsigned>(std::max(8.0f, std::min(12.0f, barWidth * 0.7f))));
+                static_cast<unsigned>(std::max(8.0f, std::min(12.0f, barWidth * 0.7f))));
             txt.setFillColor(sf::Color::White);
             const float tw = txt.getLocalBounds().size.x;
             txt.setPosition(sf::Vector2f(xPos + (barWidth - tw) / 2.0f, yPos - 16.0f));
@@ -269,10 +304,10 @@ void SortingVisualizer::renderInfoPanel()
         std::string stateStr;
         sf::Color   stateCol;
         switch (state) {
-            case AlgorithmState::IDLE:      stateStr = "IDLE";     stateCol = sf::Color(120,120,120); break;
-            case AlgorithmState::RUNNING:   stateStr = "RUNNING";  stateCol = sf::Color(80,200,80);   break;
-            case AlgorithmState::PAUSED:    stateStr = "PAUSED";   stateCol = sf::Color(255,200,0);   break;
-            case AlgorithmState::COMPLETED: stateStr = "SORTED";   stateCol = sf::Color(80,230,120);  break;
+            case AlgorithmState::IDLE:      stateStr = "IDLE";    stateCol = sf::Color(120,120,120); break;
+            case AlgorithmState::RUNNING:   stateStr = "RUNNING"; stateCol = sf::Color(80,200,80);   break;
+            case AlgorithmState::PAUSED:    stateStr = "PAUSED";  stateCol = sf::Color(255,200,0);   break;
+            case AlgorithmState::COMPLETED: stateStr = "SORTED";  stateCol = sf::Color(80,230,120);  break;
         }
         sf::Text badge(m_font, stateStr, 16);
         badge.setFillColor(stateCol);
@@ -300,11 +335,14 @@ void SortingVisualizer::renderInfoPanel()
     }
 
     {
+        // Speed + Size + Audio status (top-right)
         std::ostringstream ss;
         ss << "Speed: " << std::fixed << std::setprecision(1) << m_speed << "x"
-           << "   Size: " << m_arraySize;
+           << "   Size: " << m_arraySize
+           << "   Audio: " << (VAS_AUDIO.isEnabled() ? "ON [M]" : "OFF [M]");
         sf::Text info(m_font, ss.str(), 14);
-        info.setFillColor(sf::Color(180, 180, 180));
+        info.setFillColor(VAS_AUDIO.isEnabled()
+            ? sf::Color(100, 220, 100) : sf::Color(180, 100, 100));
         const float tw = info.getLocalBounds().size.x;
         info.setPosition({winW - tw - 20.f, 12.f});
         m_window.draw(info);
@@ -323,7 +361,7 @@ void SortingVisualizer::renderControls()
 
     const std::string controls =
         "[Space] Start/Pause   [R] Reset   [G] New Data   [.] Step   "
-        "[+/-] Speed   [[/]] Array Size   [1-5] Algorithm   [Esc] Quit";
+        "[+/-] Speed   [[/]] Size   [1-9] Algorithm   [M] Audio   [Esc] Quit";
 
     sf::Text ctrl(m_font, controls, 13);
     ctrl.setFillColor(sf::Color(150, 150, 150));
@@ -339,32 +377,45 @@ void SortingVisualizer::renderAlgorithmSelector()
     const auto  winSize = m_window.getSize();
     const float winW    = static_cast<float>(winSize.x);
 
-    static const std::array<const char*, 5> names = {
-        "1: Bubble", "2: Selection", "3: Insertion", "4: Merge", "5: Quick"
+    // 9 algorithms — two rows if they don't fit
+    static const std::array<const char*, 9> names = {
+        "1:Bubble", "2:Selection", "3:Insertion",
+        "4:Merge",  "5:Quick",     "6:Heap",
+        "7:Shell",  "8:Counting",  "9:Radix"
     };
 
-    const float btnW   = 130.f;
-    const float btnH   = 28.f;
-    const float totalW = static_cast<float>(names.size()) * (btnW + 6.f) - 6.f;
-    float x = (winW - totalW) / 2.f;
-    const float y = PANEL_HEIGHT - btnH - 8.f;
+    const float btnW   = 110.f;
+    const float btnH   = 26.f;
+    const float gap    = 5.f;
+    // Row 1: algorithms 0-4, Row 2: algorithms 5-8
+    const int   row1n  = 5;
+    const float y1      = PANEL_HEIGHT - (btnH + gap) * 2 - 4.f;
+    const float y2      = PANEL_HEIGHT - btnH - 4.f;
 
-    for (int i = 0; i < static_cast<int>(names.size()); ++i) {
+    for (int i = 0; i < ALGO_COUNT; ++i) {
+        int  row   = (i < row1n) ? 0 : 1;
+        int  col   = (i < row1n) ? i : i - row1n;
+        int  rowN  = (row == 0) ? row1n : (ALGO_COUNT - row1n);
+        float totalW = rowN * (btnW + gap) - gap;
+        float x    = (winW - totalW) / 2.f + col * (btnW + gap);
+        float y    = (row == 0) ? y1 : y2;
+
         const bool active = (i == m_algorithmIndex);
         drawRoundedRect(m_window, {x, y}, {btnW, btnH},
                         active ? sf::Color(60, 100, 200) : sf::Color(40, 40, 60));
 
-        sf::Text label(m_font, names[static_cast<size_t>(i)], 13);
+        sf::Text label(m_font, names[static_cast<size_t>(i)], 12);
         label.setFillColor(active ? sf::Color::White : sf::Color(160, 160, 160));
         const float tw = label.getLocalBounds().size.x;
         const float th = label.getLocalBounds().size.y;
         label.setPosition({x + (btnW - tw) / 2.f, y + (btnH - th) / 2.f - 2.f});
         m_window.draw(label);
-
-        x += btnW + 6.f;
     }
 }
 
+ 
+//  createAlgorithm
+ 
 std::unique_ptr<AlgorithmBase> SortingVisualizer::createAlgorithm(int index)
 {
     switch (index) {
@@ -373,6 +424,10 @@ std::unique_ptr<AlgorithmBase> SortingVisualizer::createAlgorithm(int index)
         case 2: return std::make_unique<InsertionSort>();
         case 3: return std::make_unique<MergeSort>();
         case 4: return std::make_unique<QuickSort>();
+        case 5: return std::make_unique<HeapSort>();
+        case 6: return std::make_unique<ShellSort>();
+        case 7: return std::make_unique<CountingSort>();
+        case 8: return std::make_unique<RadixSort>();
         default:
             VAS_LOG_WARN("Unknown algorithm index, defaulting to Bubble");
             return std::make_unique<BubbleSort>();

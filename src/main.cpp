@@ -5,7 +5,7 @@
 
 int main()
 {
-    //  Logger setup  ------
+    //  Logger setup  
     vas::Logger::instance().setLevel(vas::LogLevel::DEBUG);
     vas::Logger::instance().setOutputFile("vas_log.txt");
 

@@ -65,13 +65,13 @@ public:
 
     virtual ~AlgorithmBase() = default;
 
-    // -- Lifecycle  -----
+    //  Lifecycle  
     virtual void initialize() = 0; ///< Called once before first run
     virtual void update()     = 0; ///< Called every frame while RUNNING
     virtual void reset()      = 0; ///< Restore data to pre-sort state
     virtual void stepOnce()   = 0; ///< Advance exactly one comparison (PAUSED mode)
 
-    // -- State control  -
+    //  State control  
     void start()  {
         m_state = AlgorithmState::RUNNING;
         m_startTime = std::chrono::steady_clock::now();
@@ -80,7 +80,7 @@ public:
     void resume() { m_state = AlgorithmState::RUNNING; }
     void stop()   { m_state = AlgorithmState::IDLE; }
 
-    // -- Accessors  -----
+    //  Accessors  
     AlgorithmState      getState()          const { return m_state; }
     const std::string&  getName()           const { return m_name; }
     const AlgorithmStats& getStats()        const { return m_stats; }
@@ -94,7 +94,7 @@ public:
         m_animationSpeed = (speed > 0.0f) ? speed : 0.1f;
     }
 
-    // -- Callback  ------
+    //  Callback  
     StepCallback onStepChanged; ///< Set by visualizer
 
 protected:

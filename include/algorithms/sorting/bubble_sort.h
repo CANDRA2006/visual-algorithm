@@ -5,13 +5,6 @@
 /**
  * @file bubble_sort.h
  * @brief Optimized Bubble Sort with early-exit and per-step callback.
- *
- * Fixes over original:
- *  - Removed static accumulator (was shared across instances — data race).
- *  - Accumulator is now an instance member via AlgorithmBase::m_stepAccumulator.
- *  - Highlight color is correctly forwarded to the visualizer.
- *  - Sorted-tail indices emitted so bars turn green progressively.
- *  - Stats (comparisons, swaps) tracked.
  */
 
 #include "core/algorithm_base.h"
@@ -30,7 +23,7 @@ public:
     void generateData(size_t size, int lo = 10, int hi = 100);
     const std::vector<int>& getData() const { return m_data; }
 
-    // -- AlgorithmBase interface  
+    // - AlgorithmBase interface  
     void initialize() override;
     void update()     override;
     void reset()      override;

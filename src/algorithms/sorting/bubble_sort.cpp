@@ -119,7 +119,7 @@ void BubbleSort::doOneComparison()
         return;
     }
 
-    // --- Normal comparison step ---
+    //  Normal comparison step 
     m_stats.comparisons++;
 
     AlgorithmStep step;

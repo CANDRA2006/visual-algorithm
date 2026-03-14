@@ -99,7 +99,7 @@ void MergeSort::startNextSegment()
     }
 }
 
-//  advanceMerge  ----
+//  advanceMerge  
 void MergeSort::advanceMerge()
 {
     if (!m_ms.merging) {

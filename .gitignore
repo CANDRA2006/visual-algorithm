@@ -3,7 +3,6 @@ build/
 bin/
 out/
 
-
 # CMake generated files
 CMakeCache.txt
 CMakeFiles/
@@ -11,7 +10,6 @@ cmake_install.cmake
 Makefile
 *.cmake
 !CMakeLists.txt
-
 
 # Compiled binaries & object files
 *.exe
@@ -24,18 +22,13 @@ Makefile
 *.ilk
 *.exp
 
-
 # Log files
 *.log
 vas_log.txt
-*.txt
-!assets/fonts/README.txt
-
 
 # IDE — VS Code
 .vscode/
 *.code-workspace
-
 
 # IDE — Visual Studio
 .vs/
@@ -52,18 +45,16 @@ Release/
 RelWithDebInfo/
 MinSizeRel/
 
-
 # IDE — CLion / JetBrains
 .idea/
 cmake-build-*/
-
 
 # IDE — Code::Blocks
 *.cbp
 *.layout
 *.depend
 
-# OS 
+# OS
 Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db

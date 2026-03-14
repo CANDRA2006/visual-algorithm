@@ -30,15 +30,15 @@ public:
     void run();
 
 private:
-    //  SFML  ---------
+    //  SFML  
     sf::RenderWindow              m_window;
     sf::Font                      m_font;
     sf::Clock                     m_clock;
 
-    //  Subsystems  ---
+    //  Subsystems  
     std::unique_ptr<SortingVisualizer> m_visualizer;
 
-    //  Helpers  ------
+    //  Helpers  
     bool        loadFont();
     void        processEvents();
     void        handleKeyPress(sf::Keyboard::Scancode code);

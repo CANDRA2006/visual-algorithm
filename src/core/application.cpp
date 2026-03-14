@@ -7,7 +7,7 @@ namespace vas {
 
 Application::Application()
     : m_window(sf::VideoMode({1280, 800}),
-               "Visual Algorithm Simulator v2.0",
+               "Visual Algorithm Simulator v2.1",
                sf::Style::Titlebar | sf::Style::Close)
 {
     m_window.setFramerateLimit(60);
@@ -126,11 +126,21 @@ void Application::handleKeyPress(sf::Keyboard::Scancode code)
                 m_visualizer->setArraySize(m_visualizer->getArraySize() - 5);
             break;
 
+        //  Algorithm selection: 1-9 
         case SC::Num1: m_visualizer->selectAlgorithm(0); break;
         case SC::Num2: m_visualizer->selectAlgorithm(1); break;
         case SC::Num3: m_visualizer->selectAlgorithm(2); break;
         case SC::Num4: m_visualizer->selectAlgorithm(3); break;
         case SC::Num5: m_visualizer->selectAlgorithm(4); break;
+        case SC::Num6: m_visualizer->selectAlgorithm(5); break; // Heap Sort
+        case SC::Num7: m_visualizer->selectAlgorithm(6); break; // Shell Sort
+        case SC::Num8: m_visualizer->selectAlgorithm(7); break; // Counting Sort
+        case SC::Num9: m_visualizer->selectAlgorithm(8); break; // Radix Sort
+
+        // Audio toggle 
+        case SC::M:
+            m_visualizer->toggleAudio();
+            break;
 
         case SC::Escape:
             m_window.close();
