@@ -31,10 +31,10 @@ Visual Algorithm Simulator (VAS) merupakan perangkat lunak aplikasi desktop yang
 ![Bubble Sort](img/Bubble_Sort.png)
 
 ### Selection Sort
-![Selection Sort](img/Selection_Sort.png)
+![Selection Sort](img/Selection_sort.png)
 
 ### Insertion Sort
-![Insertion Sort](img/Insertion_Sort.png)
+![Insertion Sort](img/Insertion_sort.png)
 
 ### Merge Sort
 ![Merge Sort](img/Merge_Sort.png)
@@ -43,7 +43,7 @@ Visual Algorithm Simulator (VAS) merupakan perangkat lunak aplikasi desktop yang
 ![Quick Sort](img/Quick_Sort.png)
 
 ### Heap Sort
-![Heap Sort](img/Heap_Sort.png)
+![Heap Sort](img/Heap_sort.png)
 
 ### Shell Sort
 ![Shell Sort](img/Shell_Sort.png)
