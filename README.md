@@ -1,5 +1,5 @@
 # Visual Algorithm Simulator
-
+ 
 Visual Algorithm Simulator (VAS) merupakan perangkat lunak aplikasi desktop yang dirancang untuk memvisualisasikan proses kerja algoritma pengurutan klasik secara animasi waktu nyata (*real time*). Perangkat lunak ini dibangun menggunakan bahasa pemrograman **C++17** dan memanfaatkan pustaka grafis **SFML 3.0** sebagai fondasi antarmuka visualnya.
 
 ![C++17](https://img.shields.io/badge/C++-17-blue?logo=c%2B%2B)
